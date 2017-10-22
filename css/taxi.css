@@ -1,0 +1,28 @@
+#back {
+    width: 100%;
+    margin: auto;
+    background-color: #FFF2FB;
+}
+
+#map {
+    background-color: gray;
+}
+
+#wrapper {
+    width: 600px;
+    margin: auto;
+    background-color: white;
+    padding: 10px;
+}
+
+h2 {
+    margin-left: auto;
+    margin-top: 20px;
+}
+
+input[type=text] {
+    width: 200px;
+    height: 30px;
+    font-size: 15px;
+    margin: 10px auto;
+}

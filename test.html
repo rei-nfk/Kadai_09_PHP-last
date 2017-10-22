@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="btn">取得</button>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script>
+    var distance = 0;
+
+            $.ajax({
+                type: 'POST',
+                url: 'taxi_fee_search.php',
+                cache: false,
+                datatype: "json",
+                data: {
+                    pref: "東京都"
+                },
+                async: false,
+                success: function(data) {
+
+                    var parseAr = JSON.parse(data);
+                    console.log(data);
+                    distance_hatsu = data["distance_hatsu"];
+                    fee_hatsunori = data["fee_hatsunori"];
+                    fee_rate_dist = data["fee_rate_dist"];
+                    fee_rate_fee = data["fee_rate_fee"];
+
+                    distance_nokori = distance - distance_hatsu;
+
+                    if (distance_nokori < 0) {
+                        distance_nokori = 0;
+                    }
+                    //初乗り以外の距離で何回料金が上がるかを計算
+
+                    if (Math.ceil(distance_nokori / fee_rate_dist) > 0) {
+                        fee_up_number = Math.ceil(distance_nokori / fee_rate_dist);
+                    } else {
+                        fee_up_number = 0;
+                    }
+                    fee_up_number = Math.ceil(distance_nokori / fee_rate_dist);
+                    var total_fee = fee_hatsunori + fee_up_number * fee_rate_fee;
+                    $("#feeText").text("料金は" + total_fee + "円です");
+
+                },
+                complete: function() {
+
+                }
+            });
+
+
+    </script>
+    
+</body>
+
+</html>

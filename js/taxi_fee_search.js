@@ -1,0 +1,149 @@
+<script>
+    var pref; //出発地点の県名
+var distance; //走行距離
+var geocoder;
+//初期画面の設定（＋ボタンクリック時のイベント着火も含む）
+function initMap() {
+    //ルート探索の準備
+    //①ルート探索のためのDirectionsServiceオブジェクトを作る
+    //②ルート表示のためのDirectionsRendererオブジェクトを作る
+    //③出発地点を入れるためのオブジェクト（あまり分かってない）
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+    //            var geocoder = new google.maps.Geocoder();
+    geocoder = new google.maps.Geocoder();
+    //地図を描画する。ベージを読み込んだ時に発火するイベント。初期値。
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 14,
+        center: {
+            lat: 35.685175,
+            lng: 139.7528
+        }
+    });
+    directionsDisplay.setMap(map);
+    //イベント着火の準備
+    //後で定義した「calculateAndDisplayRoute」に、上で定義したオプジェクト（ルート用、描画用）を渡す
+    var onChangeHandler = function () {
+        calculateAndDisplayRoute(directionsService, directionsDisplay);
+        //                geocodeAddress(geocoder);
+    };
+    //ここで、ボタンが押されたらイベントに着火
+    document.getElementById('button').addEventListener('click', onChangeHandler);
+}
+//地図に、ルートを描画
+function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+    directionsService.route({
+        origin: document.getElementById('start').value,
+        destination: document.getElementById('end').value,
+        travelMode: 'DRIVING'
+    }, function (response, status) {
+        if (status === 'OK') {
+            //地図を描画
+            directionsDisplay.setDirections(response);
+            //移動距離を取得
+            console.dir('response : ', response)
+            distance = response.routes[0].legs[0].distance.value / 1000;
+            console.log('distance1 : ', distance);
+            $("#distanceText").text("走行距離は" + distance + "kmです");
+            geocodeAddress(geocoder);
+        } else {
+            window.alert('Directions request failed due to ' + status);
+        }
+    });
+}
+//出発地点の都道府県名の取得（タクシー料金は都道府県別に違う・・・何てこった）
+function geocodeAddress(geocoder) {
+    var address = document.getElementById('start').value;
+    geocoder.geocode({
+        'address': address
+    }, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            var prefTagNum = results[0].address_components.length - 3 //後ろから三つ目が県レベルの情報
+            pref = results[0].address_components[prefTagNum].long_name; //long_nameが地名
+            console.log(results);
+            console.log(pref);
+            console.log(prefTagNum);
+
+            //出発地点の県名に応じてタクシー料金を計算
+            var distance_hatsu = 1.052; //初乗りの距離
+            var distance_nokori = 0 //初乗り以外の距離
+            var fee_hatsunori = 410; //初乗りの料金
+            var fee_rate_dist = 0.237; //初乗り以外の距離で、何キロ単位で料金が上がるか
+            var fee_rate_fee = 80; //初乗り以外の距離で、何円単位で料金が上がるか
+            var fee_up_number = 0 //初乗り以外の距離で、料金が何回上がるか
+            switch (pref) {
+                case "東京都":
+                    distance_hatsu = 1.052;
+                    fee_hatsunori = 410;
+                    fee_rate_dist = 0.237;
+                    fee_rate_fee = 80;
+                    break;
+                case "神奈川県":
+                    distance_hatsu = 2;
+                    fee_hatsunori = 730;
+                    fee_rate_dist = 0.293;
+                    fee_rate_fee = 90;
+                    break;
+                case "千葉県":
+                    distance_hatsu = 2;
+                    fee_hatsunori = 730;
+                    fee_rate_dist = 0.289;
+                    fee_rate_fee = 90;
+                    break;
+                case "北海道":
+                    distance_hatsu = 1.6;
+                    fee_hatsunori = 670;
+                    fee_rate_dist = 0.302;
+                    fee_rate_fee = 80;
+                    break;
+                case "鹿児島県":
+                    distance_hatsu = 1.5;
+                    fee_hatsunori = 620;
+                    fee_rate_dist = 0.191;
+                    fee_rate_fee = 50;
+                    break;
+                    dafault: //東京都と同じにしている
+                        distance_hatsu = 1.052;
+                    fee_hatsunori = 410;
+                    fee_rate_dist = 0.237;
+                    fee_rate_fee = 80;
+                    break;
+            }
+            //ここが先に処理されてエラーになっているようなので（googleの結果が返って来る前に、距離の計算を始めてしまっている?）、実行を遅らせる
+            window.setTimeout(
+                distance_nokori = distance - distance_hatsu, 1000
+            )
+            if (distance_nokori < 0) {
+                distance_nokori = 0;
+            }
+            console.log("distance : ", distance);
+            console.log("distance_hatsu : ", distance_hatsu);
+            //初乗り以外の距離で何回料金が上がるかを計算
+            console.log("distance_nokori" + distance_nokori);
+            console.log(distance_nokori);
+            console.log(fee_rate_dist);
+            if (Math.ceil(distance_nokori / fee_rate_dist) > 0) {
+                fee_up_number = Math.ceil(distance_nokori / fee_rate_dist);
+            } else {
+                fee_up_number = 0;
+            }
+            console.log("distance_nokori : ", distance_nokori);
+            console.log("fee_rate_dist : ", fee_rate_dist);
+
+            fee_up_number = Math.ceil(distance_nokori / fee_rate_dist);
+            console.log("fee_hatsunori : ", fee_hatsunori);
+            console.log("fee_up_number : ", fee_up_number);
+            console.log("fee_rate_fee : ", fee_rate_fee);
+
+            var total_fee = fee_hatsunori + fee_up_number * fee_rate_fee;
+            console.log(total_fee);
+            $("#feeText").text("料金は" + total_fee + "円です");
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+        }
+    });
+}
+
+</script>
+<script async defer src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyA4SjLELr_JfknlL0huq1FX11Hx-yONUXA&callback=initMap" >
+</script>
