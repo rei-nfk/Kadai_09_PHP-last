@@ -100,10 +100,9 @@
                     //地図を描画
                     directionsDisplay.setDirections(response);
                     //移動距離を取得
-                    console.dir('response : ', response)
                     distance = response.routes[0].legs[0].distance.value / 1000;
-                    console.log('distance1 : ', distance);
-                    $("#distanceText").text("走行距離は" + distance + "kmです");
+                    var distance_show = String(distance).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
+                    $("#distanceText").text("走行距離は" + distance_show + "kmです");
                     geocodeAddress(geocoder);
                 } else {
                     window.alert('Directions request failed due to ' + status);
@@ -123,17 +122,6 @@
                             pref = results[0].address_components[i].long_name;
                         }
                     }
-                    console.log(results);
-                    console.log(pref);
-
-                    //出発地点の県名に応じてタクシー料金を計算
-                    var distance_hatsu =1.052; //初乗りの距離
-                    var distance_nokori =0 //初乗り以外の距離
-                    var fee_hatsunori =410; //初乗りの料金
-                    var fee_rate_dist =0.237; //初乗り以外の距離で、何キロ単位で料金が上がるか
-                    var fee_rate_fee =80; //初乗り以外の距離で、何円単位で料金が上がるか
-                    var fee_up_number =0 //初乗り以外の距離で、料金が何回上がるか
-
 //phpに連携
             $.ajax({
                 type: 'POST',
@@ -141,54 +129,26 @@
                 cache: false,
                 datatype: "json",
                 data: {
-                    pref: pref
+                    pref: pref,
+                    distance: distance
                 },
                 async: false,
                 success: function(data) {
-
                     var parseAr = JSON.parse(data);
-                    console.log(parseAr[0]);
-                    distance_hatsu = Number(parseAr[0]["distance_hatsu"]);
-                    fee_hatsunori = Number(parseAr[0]["fee_hatsunori"]);
-                    fee_rate_dist = Number(parseAr[0]["fee_rate_dist"]);
-                    fee_rate_fee = Number(parseAr[0]["fee_rate_fee"]);
-
-                    console.log(parseAr[0]["distance_hatsu"]);
-                    console.log(distance_hatsu);
-
-                    distance_nokori = distance - distance_hatsu;
-
-                    if (distance_nokori < 0) {
-                        distance_nokori = 0;
-                    }
-                    //初乗り以外の距離で何回料金が上がるかを計算
-
-                    if (Math.ceil(distance_nokori / fee_rate_dist) > 0) {
-                        fee_up_number = Math.ceil(distance_nokori / fee_rate_dist);
-                    } else {
-                        fee_up_number = 0;
-                    }
-                    fee_up_number = Math.ceil(distance_nokori / fee_rate_dist);
-                    var total_fee = (fee_hatsunori + fee_up_number * fee_rate_fee);
-                    $("#feeText").text("料金は" + total_fee + "円です");
-
+                    total_fee = Number(parseAr[0]["total_fee"]);
+                    var total_fee_show = String(total_fee).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
+                    $("#feeText").text("料金は" + total_fee_show + "円です");
                 },
                 complete: function() {
-
                 }
             });
-
-                    
                 } else {
                     alert('Geocode was not successful for the following reason: ' + status);
                 }
             });
         }
-
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4SjLELr_JfknlL0huq1FX11Hx-yONUXA&callback=initMap">
-
-
     </script>
 </body>
 

@@ -45,11 +45,29 @@ if($status==false){
   $row = $stmt->fetch(); //$row["name"]
 }
 
+$distance = $_POST["distance"];
+
+$distance_hatsu = $row["distance_hatsu"];
+$fee_hatsunori = $row["fee_hatsunori"];
+$fee_rate_dist = $row["fee_rate_dist"];
+$fee_rate_fee = $row["fee_rate_fee"];
+
+$distance_nokori = $distance - $distance_hatsu;
+
+if ($distance_nokori < 0) {
+    $distance_nokori = 0;
+}
+//初乗り以外の距離で何回料金が上がるかを計算
+
+if (ceil($distance_nokori / $fee_rate_dist) > 0) {
+    $fee_up_number = ceil($distance_nokori / $fee_rate_dist);
+} else {
+    $fee_up_number = 0;
+}
+$total_fee = ($fee_hatsunori + $fee_up_number * $fee_rate_fee);
+
 $data[]=array(
-'distance_hatsu' => $row["distance_hatsu"],
-'fee_hatsunori' => $row["fee_hatsunori"],
-'fee_rate_dist' => $row["fee_rate_dist"],
-'fee_rate_fee' => $row["fee_rate_fee"],
+'total_fee' => $total_fee,
 );
 $data = json_encode($data);
 echo $data;
