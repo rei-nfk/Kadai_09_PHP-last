@@ -41,7 +41,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             directionsDisplay.setDirections(response);
             //移動距離を取得
             distance = response.routes[0].legs[0].distance.value / 1000;
-            var distance_show = String(distance).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
+            var distance_show = Math.round(distance, 2);
+            console.log(distance_show);
+            distance_show = String(distance_show).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
             $("#distanceText").text("走行距離は" + distance_show + "kmです");
             geocodeAddress(geocoder);
         } else {
