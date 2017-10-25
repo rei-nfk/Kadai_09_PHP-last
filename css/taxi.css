@@ -1,7 +1,7 @@
 #back {
     width: 100%;
     margin: auto;
-    background-color: #FFF2FB;
+    background-color: white;
 }
 
 #map {
@@ -11,7 +11,7 @@
 #wrapper {
     width: 600px;
     margin: auto;
-    background-color: white;
+    background-color: #EFEFEF;
     padding: 10px;
 }
 
