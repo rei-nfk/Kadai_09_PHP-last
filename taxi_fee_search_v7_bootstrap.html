@@ -33,29 +33,17 @@
 
 <body>
     <div id="back">
-        <div id="wrapper">
+        <div id="container">
             <div class="content">
                   <div class="text-center"><img src="img/logo.png" alt="タクシー料金一発検索" width=50% ></div>
                   <div class="text-center"><h1>タクシー料金一発検索!</h1></div>
-
-                
-                <h2>どこから</h2>
-                <input type="text" name="from_text" id="start" value="東京駅">
-                <h2>どこまで</h2>
-                <input type="text" name="to_text" id="end" value="鹿児島駅">
-                <p>
-                    <button id="button">検索！</button>
-                </p>
+                  <div class="col-xs-12" ><input type="text" name="from_text" id="start" value="どこから" class="form-control"></div>
+                  <div class="col-xs-12" ><input type="text" name="to_text" id="end" value="どこまで" class="form-control"></div>
+                  <div class="col-xs-12" ><button id="button" class="form-control">検索！</button></div>
                 <h2>距離は・・・</h2>
                 <p id="distanceText"></p>
                 <h2>料金は・・・</h2>
                 <p id="feeText"></p>
-                <h2>地味なUIだけど・・・このアプリの工夫ポイント</h2>
-                <ul>
-                    <li>ランドマークでもあいまいな地名でもけっこう検索可能（googleがわかる範囲で）</li>
-                    <li>出発地点の県名を取得することで、都道府県毎のタクシー料金の違いにも対応</li>
-                </ul>
-
             </div>
             <div id="map"></div>
         </div>
