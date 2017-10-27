@@ -15,16 +15,23 @@
     padding: 10px;
 }
 
+h1{
+    font-size: 20px;
+}
+
 h2 {
     margin-left: auto;
     margin-top: 20px;
 }
 
 input[type=text] {
-    width: 200px;
+/*    width: 200px;*/
     height: 30px;
     font-size: 15px;
     margin: 10px auto;
     border-radius: 15px;
     border: solid 1px;
+}
+button{
+    background-color:#FFE900 ;
 }
