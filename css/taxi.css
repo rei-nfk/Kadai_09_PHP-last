@@ -32,6 +32,12 @@ input[type=text] {
     border-radius: 15px;
     border: solid 1px;
 }
-button{
-    background-color:#FFE900 ;
+button.form-control{
+    background-color:#FFE900 !important;
+    color: black;
+    font-size: 20px;
+    border: 1px solid black;
+}
+h3{
+    background-color: white !important;
 }

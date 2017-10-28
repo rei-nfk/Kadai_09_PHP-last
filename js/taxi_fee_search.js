@@ -44,7 +44,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             var distance_show = Math.round(distance, 2);
             console.log(distance_show);
             distance_show = String(distance_show).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
-            $("#distanceText").text("走行距離は" + distance_show + "kmです");
+            $("#distanceText").text(distance_show + "km");
             geocodeAddress(geocoder);
         } else {
             window.alert('Directions request failed due to ' + status);
@@ -79,7 +79,7 @@ function geocodeAddress(geocoder) {
             var parseAr = JSON.parse(data);
             total_fee = Number(parseAr[0]["total_fee"]);
             var total_fee_show = String(total_fee).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,' );
-            $("#feeText").text("料金は" + total_fee_show + "円です");
+            $("#feeText").text(total_fee_show + "円");
         },
         complete: function() {
         }
